@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Book, History, Heart, GraduationCap, Quran, Languages } from 'lucide-react';
+import { Book, History, Heart, GraduationCap, BookOpen, Languages } from 'lucide-react';
 
 const CategoryRibbon = () => {
     const navigate = useNavigate();
 
     const categories = [
-        { name: 'Quran & Hadith', icon: <Quran className="w-6 h-6" />, color: 'bg-emerald-100 text-emerald-700' },
+        { name: 'Quran & Hadith', icon: <BookOpen className="w-6 h-6" />, color: 'bg-emerald-100 text-emerald-700' },
         { name: 'Islamic History', icon: <History className="w-6 h-6" />, color: 'bg-blue-100 text-blue-700' },
         { name: 'Children', icon: <GraduationCap className="w-6 h-6" />, color: 'bg-amber-100 text-amber-700' },
         { name: 'Fiqh', icon: <Book className="w-6 h-6" />, color: 'bg-indigo-100 text-indigo-700' },
