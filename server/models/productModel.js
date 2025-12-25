@@ -35,6 +35,29 @@ const productSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        publisher: {
+            type: String,
+            required: true,
+        },
+        isbn: {
+            type: String,
+        },
+        pages: {
+            type: Number,
+        },
+        language: {
+            type: String,
+            required: true,
+            default: 'Bangla',
+        },
+        binding: {
+            type: String,
+            enum: ['Hardcover', 'Paperback', 'PDF'],
+            default: 'Paperback'
+        },
+        publicationYear: {
+            type: Number,
+        },
         category: {
             type: String,
             required: true,
