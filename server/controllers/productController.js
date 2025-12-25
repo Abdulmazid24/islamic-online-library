@@ -4,30 +4,53 @@ import Product from '../models/productModel.js';
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
-    const pageSize = 8;
+    const pageSize = 12;
     const page = Number(req.query.pageNumber) || 1;
 
-    const keyword = req.query.keyword
-        ? {
-            $or: [
-                {
-                    name: {
-                        $regex: req.query.keyword,
-                        $options: 'i',
-                    },
-                },
-                {
-                    author: {
-                        $regex: req.query.keyword,
-                        $options: 'i',
-                    },
-                },
-            ],
-        }
-        : {};
+    const {
+        keyword,
+        category,
+        author,
+        publisher,
+        minPrice,
+        maxPrice,
+        binding,
+        sortBy
+    } = req.query;
 
-    const count = await Product.countDocuments({ ...keyword });
-    const products = await Product.find({ ...keyword })
+    let query = {};
+
+    // Keyword search (Name or Author)
+    if (keyword) {
+        query.$or = [
+            { name: { $regex: keyword, $options: 'i' } },
+            { author: { $regex: keyword, $options: 'i' } }
+        ];
+    }
+
+    // Direct filters
+    if (category) query.category = category;
+    if (author && !keyword) query.author = author;
+    if (publisher) query.publisher = publisher;
+    if (binding) query.binding = binding;
+
+    // Price range filter
+    if (minPrice || maxPrice) {
+        query.price = {};
+        if (minPrice) query.price.$gte = Number(minPrice);
+        if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+
+    // Sorting
+    let sort = {};
+    if (sortBy === 'price-low') sort = { price: 1 };
+    else if (sortBy === 'price-high') sort = { price: -1 };
+    else if (sortBy === 'top-rated') sort = { rating: -1 };
+    else sort = { createdAt: -1 };
+
+    const count = await Product.countDocuments(query);
+    const products = await Product.find(query)
+        .sort(sort)
         .limit(pageSize)
         .skip(pageSize * (page - 1));
 
@@ -73,10 +96,15 @@ const createProduct = async (req, res) => {
         user: req.user._id,
         image: '/images/sample.jpg',
         author: 'Sample Author',
+        publisher: 'Sample Publisher',
         category: 'Sample category',
         countInStock: 0,
         numReviews: 0,
         description: 'Sample description',
+        isbn: '000-0000000000',
+        pages: 0,
+        language: 'Bangla',
+        binding: 'Paperback'
     });
 
     const createdProduct = await product.save();
@@ -93,6 +121,12 @@ const updateProduct = async (req, res) => {
         description,
         image,
         author,
+        publisher,
+        isbn,
+        pages,
+        language,
+        binding,
+        publicationYear,
         category,
         countInStock,
     } = req.body;
@@ -105,6 +139,12 @@ const updateProduct = async (req, res) => {
         product.description = description;
         product.image = image;
         product.author = author;
+        product.publisher = publisher;
+        product.isbn = isbn;
+        product.pages = pages;
+        product.language = language;
+        product.binding = binding;
+        product.publicationYear = publicationYear;
         product.category = category;
         product.countInStock = countInStock;
 
@@ -203,6 +243,18 @@ const getTopProducts = async (req, res) => {
     res.json(products);
 };
 
+// @desc    Get unique filter values (Authors, Publishers, Categories)
+// @route   GET /api/products/filters
+// @access  Public
+const getFilterValues = async (req, res) => {
+    const categories = await Product.distinct('category');
+    const authors = await Product.distinct('author');
+    const publishers = await Product.distinct('publisher');
+    const bindings = await Product.distinct('binding');
+
+    res.json({ categories, authors, publishers, bindings });
+};
+
 export {
     getProducts,
     getProductById,
@@ -212,4 +264,5 @@ export {
     createProductReview,
     deleteProductReview,
     getTopProducts,
+    getFilterValues,
 };
