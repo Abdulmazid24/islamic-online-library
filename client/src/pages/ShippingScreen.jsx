@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { saveShippingAddress } from '../redux/cartSlice';
 import CheckoutSteps from '../components/CheckoutSteps';
-import { MapPin, Home, Postcode, Globe, Phone, ArrowLeft } from 'lucide-react';
+import { MapPin, Home, Globe, Phone, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ShippingScreen = () => {
