@@ -4,11 +4,49 @@ import { BASE_URL, PRODUCTS_URL } from '../constants';
 
 export const fetchProducts = createAsyncThunk(
     'products/fetchProducts',
-    async ({ keyword = '', pageNumber = '' } = {}, { rejectWithValue }) => {
+    async (params = {}, { rejectWithValue }) => {
         try {
-            const { data } = await axios.get(
-                `${BASE_URL}${PRODUCTS_URL}?keyword=${keyword}&pageNumber=${pageNumber}`
+            const {
+                keyword = '',
+                pageNumber = '',
+                category = '',
+                author = '',
+                publisher = '',
+                minPrice = '',
+                maxPrice = '',
+                binding = '',
+                sortBy = ''
+            } = params;
+
+            const { data } = await axios.get(`${BASE_URL}${PRODUCTS_URL}`, {
+                params: {
+                    keyword,
+                    pageNumber,
+                    category,
+                    author,
+                    publisher,
+                    minPrice,
+                    maxPrice,
+                    binding,
+                    sortBy
+                }
+            });
+            return data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
             );
+        }
+    }
+);
+
+export const fetchFilterValues = createAsyncThunk(
+    'products/fetchFilterValues',
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.get(`${BASE_URL}${PRODUCTS_URL}/filters`);
             return data;
         } catch (error) {
             return rejectWithValue(
@@ -215,6 +253,13 @@ const productSlice = createSlice({
         successReviewDelete: false,
         page: 1,
         pages: 1,
+        filters: {
+            categories: [],
+            authors: [],
+            publishers: [],
+            bindings: []
+        },
+        loadingFilters: false
     },
     reducers: {
         resetProductState: (state) => {
@@ -322,6 +367,17 @@ const productSlice = createSlice({
             })
             .addCase(fetchTopProducts.rejected, (state, action) => {
                 state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(fetchFilterValues.pending, (state) => {
+                state.loadingFilters = true;
+            })
+            .addCase(fetchFilterValues.fulfilled, (state, action) => {
+                state.loadingFilters = false;
+                state.filters = action.payload;
+            })
+            .addCase(fetchFilterValues.rejected, (state, action) => {
+                state.loadingFilters = false;
                 state.error = action.payload;
             });
     },
