@@ -1,0 +1,3 @@
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+MongoDB Connected: cluster0-shard-00-00.5rne0.mongodb.net
+ValidationError: binding: `Pocket` is not a valid enum value for path `binding`.
