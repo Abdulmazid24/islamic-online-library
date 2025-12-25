@@ -78,50 +78,76 @@ const ProductScreen = () => {
                     </div>
 
                     {/* Product Info */}
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <span className="inline-block bg-secondary/20 text-primary px-3 py-1 rounded-full text-sm font-semibold">
-                                {product.category}
-                            </span>
-                            <h1 className="text-4xl font-bold text-neutral-800 font-arabic">{product.name}</h1>
-                            <p className="text-xl text-neutral-500 font-medium">By {product.author}</p>
+                    <div className="space-y-8">
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3">
+                                <span className="inline-block bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">
+                                    {product.category}
+                                </span>
+                                <span className="inline-block bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">
+                                    {product.binding}
+                                </span>
+                            </div>
+                            <h1 className="text-4xl font-black text-slate-900 leading-tight">{product.name}</h1>
+                            <p className="text-xl text-slate-500 font-semibold">
+                                by <span className="text-emerald-600 underline decoration-emerald-200 decoration-2 underline-offset-4 cursor-pointer hover:text-emerald-700 transition-colors">{product.author}</span>
+                            </p>
                         </div>
 
                         <div className="flex items-center space-x-4">
-                            <div className="flex text-yellow-500">
+                            <div className="flex text-yellow-400">
                                 {[...Array(5)].map((_, i) => (
-                                    <Star key={i} size={20} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} strokeWidth={1.5} className={i < Math.floor(product.rating) ? "" : "text-gray-300"} />
+                                    <Star key={i} size={20} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} strokeWidth={2} className={i < Math.floor(product.rating) ? "" : "text-slate-200"} />
                                 ))}
                             </div>
-                            <span className="text-neutral-400 font-medium">({product.numReviews} Reviews)</span>
+                            <span className="text-slate-400 font-bold">({product.numReviews} Verified Reviews)</span>
                         </div>
 
-                        <div className="text-3xl font-bold text-primary">৳ {product.price}</div>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-4xl font-black text-slate-900">৳{product.price}</span>
+                            {product.price > 400 && <span className="text-lg text-slate-400 line-through">৳{Math.round(product.price * 1.2)}</span>}
+                        </div>
 
-                        <div className="border-t border-neutral-100 pt-6">
-                            <p className="text-neutral-600 leading-relaxed text-lg">
+                        {/* Specification Table */}
+                        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                            <div className="bg-slate-50/50 px-6 py-4 border-b border-slate-100">
+                                <h3 className="text-sm font-black text-slate-700 uppercase tracking-widest">Book Specifications</h3>
+                            </div>
+                            <div className="grid grid-cols-2 lg:grid-cols-2">
+                                <SpecItem label="ISBN" value={product.isbn || 'N/A'} />
+                                <SpecItem label="Publisher" value={product.publisher} />
+                                <SpecItem label="Pages" value={product.pages} />
+                                <SpecItem label="Language" value={product.language} />
+                                <SpecItem label="Publication Year" value={product.publicationYear} />
+                                <SpecItem label="Binding" value={product.binding} />
+                            </div>
+                        </div>
+
+                        <div className="border-t border-slate-100 pt-6">
+                            <h3 className="text-sm font-black text-slate-700 uppercase tracking-widest mb-4">Description</h3>
+                            <p className="text-slate-600 leading-relaxed text-lg whitespace-pre-line">
                                 {product.description}
                             </p>
                         </div>
 
-                        <div className="bg-neutral-50 p-6 rounded-2xl space-y-4">
-                            <div className="flex justify-between items-center">
-                                <span className="font-semibold text-neutral-600">Status</span>
-                                <span className={`px-3 py-1 rounded-full text-sm font-bold ${product.countInStock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        <div className="bg-slate-900 p-8 rounded-3xl space-y-6 shadow-2xl shadow-emerald-900/10">
+                            <div className="flex justify-between items-center text-white/60">
+                                <span className="font-bold uppercase tracking-widest text-xs">Availability</span>
+                                <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest ${product.countInStock > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
                                     {product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}
                                 </span>
                             </div>
 
                             {product.countInStock > 0 && (
-                                <div className="flex justify-between items-center">
-                                    <span className="font-semibold text-neutral-600">Quantity</span>
+                                <div className="flex justify-between items-center text-white/60">
+                                    <span className="font-bold uppercase tracking-widest text-xs">Select Quantity</span>
                                     <select
                                         value={qty}
                                         onChange={(e) => setQty(Number(e.target.value))}
-                                        className="bg-white border border-neutral-200 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                        className="bg-white/10 border border-white/10 text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none cursor-pointer"
                                     >
                                         {[...Array(product.countInStock).keys()].map((x) => (
-                                            <option key={x + 1} value={x + 1}>
+                                            <option key={x + 1} value={x + 1} className="text-slate-900">
                                                 {x + 1}
                                             </option>
                                         ))}
@@ -129,17 +155,23 @@ const ProductScreen = () => {
                                 </div>
                             )}
 
-                            <button
-                                onClick={addToCartHandler}
-                                disabled={product.countInStock === 0}
-                                className={`w-full py-4 rounded-xl flex items-center justify-center space-x-2 font-bold text-lg transition-all transform active:scale-[0.98] ${product.countInStock > 0
-                                    ? 'bg-primary text-white hover:opacity-90 hover:shadow-lg'
-                                    : 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
-                                    }`}
-                            >
-                                <ShoppingCart size={24} />
-                                <span>Add to Cart</span>
-                            </button>
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={addToCartHandler}
+                                    disabled={product.countInStock === 0}
+                                    className={`flex-1 py-5 rounded-2xl flex items-center justify-center space-x-3 font-black text-sm uppercase tracking-widest transition-all ${product.countInStock > 0
+                                        ? 'bg-emerald-500 text-white hover:bg-emerald-600 hover:shadow-xl shadow-emerald-500/20'
+                                        : 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
+                                        }`}
+                                >
+                                    <ShoppingCart size={18} strokeWidth={3} />
+                                    <span>Add to Cart</span>
+                                </button>
+
+                                <button className="p-5 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all group">
+                                    <CheckCircle size={20} className="group-hover:text-emerald-400" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -237,5 +269,12 @@ const ProductScreen = () => {
         </div>
     );
 };
+
+const SpecItem = ({ label, value }) => (
+    <div className="px-6 py-4 border-b border-r border-slate-50 last:border-b-0 group">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-emerald-500 transition-colors">{label}</p>
+        <p className="text-sm font-bold text-slate-700">{value || '---'}</p>
+    </div>
+);
 
 export default ProductScreen;
