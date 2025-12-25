@@ -1,9 +1,10 @@
+import asyncHandler from 'express-async-handler';
 import Product from '../models/productModel.js';
 
 // @desc    Fetch all products
 // @route   GET /api/products
 // @access  Public
-const getProducts = async (req, res) => {
+const getProducts = asyncHandler(async (req, res) => {
     const pageSize = 12;
     const page = Number(req.query.pageNumber) || 1;
 
@@ -55,12 +56,12 @@ const getProducts = async (req, res) => {
         .skip(pageSize * (page - 1));
 
     res.json({ products, page, pages: Math.ceil(count / pageSize) });
-};
+});
 
 // @desc    Fetch single product
 // @route   GET /api/products/:id
 // @access  Public
-const getProductById = async (req, res) => {
+const getProductById = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
@@ -69,12 +70,12 @@ const getProductById = async (req, res) => {
         res.status(404);
         throw new Error('Product not found');
     }
-};
+});
 
 // @desc    Delete a product
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
-const deleteProduct = async (req, res) => {
+const deleteProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
@@ -84,12 +85,12 @@ const deleteProduct = async (req, res) => {
         res.status(404);
         throw new Error('Product not found');
     }
-};
+});
 
 // @desc    Create a product
 // @route   POST /api/products
 // @access  Private/Admin
-const createProduct = async (req, res) => {
+const createProduct = asyncHandler(async (req, res) => {
     const product = new Product({
         name: 'Sample name',
         price: 0,
@@ -110,12 +111,12 @@ const createProduct = async (req, res) => {
 
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
-};
+});
 
 // @desc    Update a product
 // @route   PUT /api/products/:id
 // @access  Private/Admin
-const updateProduct = async (req, res) => {
+const updateProduct = asyncHandler(async (req, res) => {
     const {
         name,
         price,
@@ -157,12 +158,12 @@ const updateProduct = async (req, res) => {
         res.status(404);
         throw new Error('Product not found');
     }
-};
+});
 
 // @desc    Create new review
 // @route   POST /api/products/:id/reviews
 // @access  Private
-const createProductReview = async (req, res) => {
+const createProductReview = asyncHandler(async (req, res) => {
     const { rating, comment } = req.body;
 
     const product = await Product.findById(req.params.id);
@@ -198,12 +199,12 @@ const createProductReview = async (req, res) => {
         res.status(404);
         throw new Error('Product not found');
     }
-};
+});
 
 // @desc    Delete a review
 // @route   DELETE /api/products/:id/reviews/:reviewId
 // @access  Private/Admin
-const deleteProductReview = async (req, res) => {
+const deleteProductReview = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
@@ -236,27 +237,27 @@ const deleteProductReview = async (req, res) => {
         res.status(404);
         throw new Error('Product not found');
     }
-};
+});
 
 // @desc    Get top rated products
 // @route   GET /api/products/top
 // @access  Public
-const getTopProducts = async (req, res) => {
+const getTopProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({}).sort({ rating: -1 }).limit(3);
     res.json(products);
-};
+});
 
 // @desc    Get unique filter values (Authors, Publishers, Categories)
 // @route   GET /api/products/filters
 // @access  Public
-const getFilterValues = async (req, res) => {
+const getFilterValues = asyncHandler(async (req, res) => {
     const categories = await Product.distinct('category');
     const authors = await Product.distinct('author');
     const publishers = await Product.distinct('publisher');
     const bindings = await Product.distinct('binding');
 
     res.json({ categories, authors, publishers, bindings });
-};
+});
 
 export {
     getProducts,
