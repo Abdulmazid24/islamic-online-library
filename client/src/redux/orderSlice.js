@@ -146,10 +146,42 @@ export const deliverOrder = createAsyncThunk(
     }
 );
 
+export const payOrder = createAsyncThunk(
+    'order/payOrder',
+    async (orderId, { getState, rejectWithValue }) => {
+        try {
+            const {
+                auth: { userInfo },
+            } = getState();
+
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            };
+
+            const { data } = await axios.post(
+                `${BASE_URL}${ORDERS_URL}/${orderId}/pay`,
+                {},
+                config
+            );
+
+            return data; // returns { url: GatewayPageURL }
+        } catch (error) {
+            return rejectWithValue(
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+            );
+        }
+    }
+);
+
 const orderSlice = createSlice({
     name: 'order',
     initialState: {
         loading: false,
+        loadingPay: false,
         success: false,
         order: null,
         orders: [],
@@ -220,6 +252,17 @@ const orderSlice = createSlice({
             })
             .addCase(deliverOrder.rejected, (state, action) => {
                 state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(payOrder.pending, (state) => {
+                state.loadingPay = true;
+            })
+            .addCase(payOrder.fulfilled, (state, action) => {
+                state.loadingPay = false;
+                window.location.href = action.payload.url;
+            })
+            .addCase(payOrder.rejected, (state, action) => {
+                state.loadingPay = false;
                 state.error = action.payload;
             });
     },

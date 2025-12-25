@@ -1,24 +1,40 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrderDetails, deliverOrder } from '../redux/orderSlice';
-import { MapPin, CreditCard, Package, Truck, CheckCircle, XCircle, Mail, User, Phone, Clock, FileText } from 'lucide-react';
+import { getOrderDetails, deliverOrder, payOrder } from '../redux/orderSlice';
+import { MapPin, CreditCard, Package, Truck, CheckCircle, XCircle, Mail, User, Phone, Clock, FileText, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const OrderScreen = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
+    const [searchParams] = useSearchParams();
 
-    const { order, loading, error } = useSelector((state) => state.order);
+    const { order, loading, error, loadingPay } = useSelector((state) => state.order);
     const { userInfo } = useSelector((state) => state.auth);
 
     useEffect(() => {
+        const paymentStatus = searchParams.get('payment');
+        if (paymentStatus === 'success') {
+            toast.success('Payment completed successfully!');
+        } else if (paymentStatus === 'fail') {
+            toast.error('Payment failed. Please try again.');
+        } else if (paymentStatus === 'cancel') {
+            toast.info('Payment was cancelled.');
+        }
+
         if (!order || order._id !== id) {
             dispatch(getOrderDetails(id));
         }
-    }, [order, id, dispatch]);
+    }, [order, id, dispatch, searchParams]);
 
     const deliverHandler = () => {
         dispatch(deliverOrder(order));
+    };
+
+    const payHandler = () => {
+        dispatch(payOrder(id));
     };
 
     if (loading) return (
@@ -191,6 +207,22 @@ const OrderScreen = () => {
                                         </div>
                                     </div>
                                 </div>
+
+                                {!order.isPaid && (
+                                    <div className="space-y-4 mt-8">
+                                        <button
+                                            onClick={payHandler}
+                                            disabled={loadingPay}
+                                            className="w-full py-5 bg-emerald-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
+                                        >
+                                            {loadingPay ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <CreditCard size={20} />}
+                                            Pay via SSLCommerz / bKash
+                                        </button>
+                                        <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                                            <ShieldCheck size={14} className="text-emerald-500" /> Secure Payment Gateway
+                                        </div>
+                                    </div>
+                                )}
 
                                 {userInfo && userInfo.isAdmin && !order.isDelivered && (
                                     <button
