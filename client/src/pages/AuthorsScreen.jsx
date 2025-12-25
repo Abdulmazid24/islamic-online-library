@@ -6,13 +6,14 @@ import { Link } from 'react-router-dom';
 
 const AuthorsScreen = () => {
     const dispatch = useDispatch();
-    const { filters, loadingFilters } = useSelector((state) => state.filters ? state : state.products);
+    const { filters, loadingFilters } = useSelector((state) => state.products);
+    const [searchTerm, setSearchTerm] = React.useState('');
 
     useEffect(() => {
         dispatch(fetchFilterValues());
     }, [dispatch]);
 
-    const authors = filters?.authors || [];
+    const authors = filters?.authors?.filter(a => a.toLowerCase().includes(searchTerm.toLowerCase())) || [];
 
     if (loadingFilters) return (
         <div className="flex flex-col items-center justify-center py-40 animate-pulse">
@@ -33,12 +34,14 @@ const AuthorsScreen = () => {
                     <p className="text-slate-500 text-lg">Discover the brilliant minds behind our collection of timeless Islamic wisdom and modern literature.</p>
                 </div>
 
-                {/* Search / Filter (Visual only for now) */}
+                {/* Search */}
                 <div className="max-w-xl mx-auto mb-16 relative">
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                     <input
                         type="text"
                         placeholder="Search for an author..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-14 pr-6 py-5 bg-white border border-slate-200 rounded-3xl shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all font-medium"
                     />
                 </div>
@@ -47,7 +50,7 @@ const AuthorsScreen = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     {authors.map((author, index) => (
                         <Link
-                            to={`/search/author:${author}`}
+                            to={`/books?author=${author}`}
                             key={index}
                             className="group bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 text-center relative overflow-hidden"
                         >

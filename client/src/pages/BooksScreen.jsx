@@ -8,21 +8,33 @@ import { useSearchParams, Link } from 'react-router-dom';
 
 const BooksScreen = () => {
     const dispatch = useDispatch();
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const keyword = searchParams.get('keyword') || '';
-    const pageNumber = searchParams.get('pageNumber') || 1;
-    const category = searchParams.get('category') || '';
-    const author = searchParams.get('author') || '';
-    const minPrice = searchParams.get('minPrice') || '';
-    const maxPrice = searchParams.get('maxPrice') || '';
-    const sortBy = searchParams.get('sortBy') || '';
+    // Filter State Sync with URL
+    const filters = {
+        keyword: searchParams.get('keyword') || '',
+        pageNumber: searchParams.get('pageNumber') || 1,
+        category: searchParams.get('category') || '',
+        author: searchParams.get('author') || '',
+        publisher: searchParams.get('publisher') || '',
+        minPrice: searchParams.get('minPrice') || '',
+        maxPrice: searchParams.get('maxPrice') || '',
+        binding: searchParams.get('binding') || '',
+        sortBy: searchParams.get('sortBy') || '',
+    };
 
     const { products, loading, error, page, pages } = useSelector((state) => state.products);
 
     useEffect(() => {
-        dispatch(fetchProducts({ keyword, pageNumber, category, author, minPrice, maxPrice, sortBy }));
-    }, [dispatch, keyword, pageNumber, category, author, minPrice, maxPrice, sortBy]);
+        dispatch(fetchProducts(filters));
+    }, [dispatch, searchParams]);
+
+    const handleFilterChange = (newFilters) => {
+        const cleanFilters = Object.fromEntries(
+            Object.entries(newFilters).filter(([_, v]) => v !== '')
+        );
+        setSearchParams(cleanFilters);
+    };
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center py-40 animate-pulse">
@@ -57,7 +69,10 @@ const BooksScreen = () => {
                     {/* Sidebar */}
                     <aside className="lg:w-1/4">
                         <div className="sticky top-24">
-                            <FilterSidebar />
+                            <FilterSidebar
+                                onFilterChange={handleFilterChange}
+                                currentFilters={filters}
+                            />
                         </div>
                     </aside>
 
@@ -77,9 +92,12 @@ const BooksScreen = () => {
                                         </div>
                                         <h3 className="text-2xl font-bold text-slate-400 mb-2">No books found</h3>
                                         <p className="text-slate-400 mb-8">Try adjusting your filters or search keywords.</p>
-                                        <Link to="/books" className="inline-flex items-center gap-2 px-8 py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all">
+                                        <button
+                                            onClick={() => handleFilterChange({})}
+                                            className="inline-flex items-center gap-2 px-8 py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all"
+                                        >
                                             Clear All Filters
-                                        </Link>
+                                        </button>
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
