@@ -37,9 +37,11 @@ const ProductScreen = () => {
     }, [dispatch, id, successReview, successReviewDelete]);
 
     const addToCartHandler = () => {
-        dispatch(addToCart({ ...product, product: product._id, qty }));
-        toast.success('Added to cart');
-        navigate('/cart');
+        if (product && product._id) {
+            dispatch(addToCart({ ...product, product: product._id, qty }));
+            toast.success('Added to cart');
+            navigate('/cart');
+        }
     };
 
     const submitHandler = (e) => {
@@ -189,17 +191,16 @@ const ProductScreen = () => {
                 </div>
             )}
 
-            {/* Reviews Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 border-t border-neutral-100 pt-16">
                 <div>
                     <h2 className="text-3xl font-bold mb-8 text-neutral-800 font-arabic">Customer Reviews</h2>
-                    {product.reviews.length === 0 && (
+                    {product.reviews?.length === 0 && (
                         <div className="bg-neutral-50 text-neutral-500 p-8 rounded-2xl text-center italic">
                             No reviews yet. Be the first to review this book!
                         </div>
                     )}
                     <div className="space-y-6">
-                        {product.reviews.map((review) => (
+                        {product.reviews?.map((review) => (
                             <div key={review._id} className="bg-white p-6 rounded-2xl shadow-sm border border-neutral-100 space-y-3">
                                 <div className="flex justify-between items-start">
                                     <h4 className="font-bold text-neutral-800">{review.name}</h4>

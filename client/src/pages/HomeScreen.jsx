@@ -73,7 +73,7 @@ const HomeScreen = () => {
                                     {filters.keyword ? `Search Results for "${filters.keyword}"` : 'Premium Book Collection'}
                                 </h1>
                                 <p className="text-slate-500 text-sm">
-                                    Showing {products.length} of our hand-picked titles
+                                    Showing {products?.length || 0} of our hand-picked titles
                                 </p>
                             </div>
 
@@ -103,7 +103,7 @@ const HomeScreen = () => {
                                 <div className="text-red-500 text-xl font-semibold mb-2">Something went wrong</div>
                                 <div className="text-slate-500">{error}</div>
                             </div>
-                        ) : products.length === 0 ? (
+                        ) : products?.length === 0 ? (
                             <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-slate-100">
                                 <div className="text-emerald-500 text-6xl mb-4">📚</div>
                                 <h3 className="text-2xl font-bold text-slate-800 mb-2">No books found</h3>

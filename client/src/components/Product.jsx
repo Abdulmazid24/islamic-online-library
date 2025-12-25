@@ -22,6 +22,10 @@ const Product = ({ product }) => {
                         src={product.image}
                         alt={product.name}
                         className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 drop-shadow-2xl"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/images/book-placeholder.png';
+                        }}
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-300">

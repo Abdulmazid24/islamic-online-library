@@ -14,7 +14,7 @@ const ProductCarousel = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (topProducts.length > 0) {
+        if (topProducts?.length > 0) {
             const timer = setInterval(() => {
                 setCurrentIndex((prevIndex) => (prevIndex + 1) % topProducts.length);
             }, 5000);
@@ -24,14 +24,14 @@ const ProductCarousel = () => {
 
     if (loading) return null;
     if (error) return null;
-    if (!topProducts || topProducts.length === 0) return null;
+    if (!topProducts || topProducts?.length === 0) return null;
 
     const nextSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % topProducts.length);
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % topProducts?.length);
     };
 
     const prevSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + topProducts.length) % topProducts.length);
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + topProducts?.length) % topProducts?.length);
     };
 
     return (
@@ -40,7 +40,7 @@ const ProductCarousel = () => {
                 className="flex transition-transform duration-700 ease-in-out h-full"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-                {topProducts.map((product) => (
+                {topProducts?.map((product) => (
                     <div key={product._id} className="min-w-full h-full flex items-center justify-center relative overflow-hidden">
                         {/* Decorative Circles */}
                         <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-white/10 rounded-full blur-3xl"></div>
@@ -77,6 +77,10 @@ const ProductCarousel = () => {
                                     src={product.image}
                                     alt={product.name}
                                     className="w-48 md:w-72 h-auto object-contain rounded-lg shadow-[25px_25px_50px_rgba(0,0,0,0.4)] transform -rotate-6 group-hover/image:rotate-0 transition-transform duration-500 z-10 relative"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = '/images/book-placeholder.png';
+                                    }}
                                 />
                             </div>
                         </div>
@@ -100,7 +104,7 @@ const ProductCarousel = () => {
 
             {/* Indicators */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
-                {topProducts.map((_, index) => (
+                {topProducts?.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => setCurrentIndex(index)}
