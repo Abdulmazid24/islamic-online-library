@@ -15,6 +15,9 @@ import ProductListScreen from './pages/ProductListScreen';
 import ProductEditScreen from './pages/ProductEditScreen';
 import UserListScreen from './pages/UserListScreen';
 import UserEditScreen from './pages/UserEditScreen';
+import BooksScreen from './pages/BooksScreen';
+import AuthorsScreen from './pages/AuthorsScreen';
+import ContactScreen from './pages/ContactScreen';
 import AdminRoute from './components/AdminRoute';
 import SearchBox from './components/SearchBox';
 
@@ -41,9 +44,9 @@ function App() {
             <Link to="/" className="text-2xl font-bold font-arabic">Wafilife Clone</Link>
             <nav className="hidden md:flex space-x-6">
               <Link to="/" className="hover:text-secondary transition-colors">Home</Link>
-              <Link to="/" className="hover:text-secondary transition-colors">Books</Link>
-              <Link to="/" className="hover:text-secondary transition-colors">Authors</Link>
-              <Link to="/" className="hover:text-secondary transition-colors">Contact</Link>
+              <Link to="/books" className="hover:text-secondary transition-colors">Books</Link>
+              <Link to="/authors" className="hover:text-secondary transition-colors">Authors</Link>
+              <Link to="/contact" className="hover:text-secondary transition-colors">Contact</Link>
             </nav>
             <SearchBox />
             <div className="flex space-x-4 items-center">
@@ -106,6 +109,9 @@ function App() {
             <Route path="/order/:id" element={<OrderScreen />} />
             <Route path="/product/:id" element={<ProductScreen />} />
             <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/books" element={<BooksScreen />} />
+            <Route path="/authors" element={<AuthorsScreen />} />
+            <Route path="/contact" element={<ContactScreen />} />
 
             <Route element={<AdminRoute />}>
               <Route path="/admin/orderlist" element={<OrderListScreen />} />
