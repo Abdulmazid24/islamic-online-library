@@ -3,8 +3,9 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductById, createProductReview, deleteProductReview, resetProductState } from '../redux/productSlice';
 import { addToCart } from '../redux/cartSlice';
-import { Star, ShoppingCart, ArrowLeft, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
+import { Star, ShoppingCart, ArrowLeft, CheckCircle, AlertCircle, Trash2, Eye } from 'lucide-react';
 import { toast } from 'react-toastify';
+import PreviewModal from '../components/PreviewModal';
 
 const ProductScreen = () => {
     const { id } = useParams();
@@ -14,6 +15,7 @@ const ProductScreen = () => {
     const [qty, setQty] = useState(1);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
     const { product, loading, error, successReview, loadingReview, errorReview, successReviewDelete, loadingReviewDelete } = useSelector(
         (state) => state.products
@@ -69,11 +71,21 @@ const ProductScreen = () => {
             {product && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
                     {/* Product Image */}
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-neutral-100 flex items-center justify-center h-[500px]">
+                    <div className="bg-white rounded-[2.5rem] p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center min-h-[500px] relative group/img">
                         {product.image ? (
-                            <img src={product.image} alt={product.name} className="max-h-full max-w-full object-contain" />
+                            <img src={product.image} alt={product.name} className="max-h-[450px] max-w-full object-contain drop-shadow-2xl transition-transform duration-700 group-hover/img:scale-105" />
                         ) : (
-                            <div className="text-neutral-300">No Image Available</div>
+                            <div className="text-slate-300">No Image Available</div>
+                        )}
+
+                        {product.previewUrl && (
+                            <button
+                                onClick={() => setIsPreviewOpen(true)}
+                                className="absolute bottom-8 bg-white/90 backdrop-blur-md border border-slate-200 text-slate-800 px-6 py-3 rounded-2xl flex items-center gap-2 font-black text-xs uppercase tracking-widest shadow-xl hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all transform hover:-translate-y-1 active:scale-95"
+                            >
+                                <Eye size={16} strokeWidth={3} />
+                                Look Inside
+                            </button>
                         )}
                     </div>
 
@@ -266,6 +278,13 @@ const ProductScreen = () => {
                     )}
                 </div>
             </div>
+
+            <PreviewModal
+                isOpen={isPreviewOpen}
+                onClose={() => setIsPreviewOpen(false)}
+                previewUrl={product.previewUrl}
+                bookName={product.name}
+            />
         </div>
     );
 };

@@ -58,6 +58,9 @@ const productSchema = new mongoose.Schema(
         publicationYear: {
             type: Number,
         },
+        previewUrl: {
+            type: String,
+        },
         category: {
             type: String,
             required: true,

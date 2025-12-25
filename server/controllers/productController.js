@@ -104,7 +104,8 @@ const createProduct = async (req, res) => {
         isbn: '000-0000000000',
         pages: 0,
         language: 'Bangla',
-        binding: 'Paperback'
+        binding: 'Paperback',
+        previewUrl: '/previews/sample.pdf'
     });
 
     const createdProduct = await product.save();
@@ -127,6 +128,7 @@ const updateProduct = async (req, res) => {
         language,
         binding,
         publicationYear,
+        previewUrl,
         category,
         countInStock,
     } = req.body;
@@ -145,6 +147,7 @@ const updateProduct = async (req, res) => {
         product.language = language;
         product.binding = binding;
         product.publicationYear = publicationYear;
+        product.previewUrl = previewUrl;
         product.category = category;
         product.countInStock = countInStock;
 

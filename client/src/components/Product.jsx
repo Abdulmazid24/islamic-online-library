@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Star, ShoppingCart, Info } from 'lucide-react';
+import { Star, ShoppingCart, Info, Eye } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
 import { toast } from 'react-toastify';
@@ -30,20 +30,31 @@ const Product = ({ product }) => {
                 )}
 
                 {/* Overlay on Hover */}
-                <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-all duration-500 backdrop-blur-[2px] flex items-center justify-center gap-4">
+                <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-all duration-500 backdrop-blur-[2px] flex items-center justify-center gap-3">
                     <Link
                         to={`/product/${product._id}`}
-                        className="p-4 bg-white text-slate-900 rounded-2xl hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-xl transform translate-y-4 group-hover:translate-y-0"
+                        className="p-3 bg-white text-slate-900 rounded-xl hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-xl transform translate-y-4 group-hover:translate-y-0"
                         title="View Details"
                     >
-                        <Info size={22} strokeWidth={2.5} />
+                        <Info size={20} strokeWidth={2.5} />
                     </Link>
+
+                    {product.previewUrl && (
+                        <Link
+                            to={`/product/${product._id}`}
+                            className="p-3 bg-white text-slate-900 rounded-xl hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-xl transform translate-y-4 group-hover:translate-y-0 delay-75"
+                            title="Look Inside"
+                        >
+                            <Eye size={20} strokeWidth={2.5} />
+                        </Link>
+                    )}
+
                     <button
                         onClick={addToCartHandler}
-                        className="p-4 bg-emerald-500 text-white rounded-2xl hover:bg-emerald-600 transition-all duration-300 shadow-xl transform translate-y-4 group-hover:translate-y-0 delay-75"
+                        className="p-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-all duration-300 shadow-xl transform translate-y-4 group-hover:translate-y-0 delay-100"
                         title="Add to Cart"
                     >
-                        <ShoppingCart size={22} strokeWidth={2.5} />
+                        <ShoppingCart size={20} strokeWidth={2.5} />
                     </button>
                 </div>
 
