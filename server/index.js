@@ -32,6 +32,17 @@ const limiter = rateLimit({
   standardHeaders: 'draft-7', // set `RateLimit` and `RateLimit-Policy` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
   message: 'Too many requests from this IP, please try again after 15 minutes',
+  // Fix for Vercel serverless environment
+  keyGenerator: (req) => {
+    return req.headers['x-forwarded-for']?.split(',')[0] ||
+      req.headers['x-real-ip'] ||
+      req.ip ||
+      'unknown';
+  },
+  skip: (req) => {
+    // Skip rate limiting in development
+    return process.env.NODE_ENV === 'development';
+  }
 });
 app.use('/api', limiter);
 
