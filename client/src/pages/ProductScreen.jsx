@@ -75,7 +75,15 @@ const ProductScreen = () => {
                     {/* Product Image */}
                     <div className="bg-white rounded-[2.5rem] p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center min-h-[500px] relative group/img">
                         {product.image ? (
-                            <img src={product.image} alt={product.name} className="max-h-[450px] max-w-full object-contain drop-shadow-2xl transition-transform duration-700 group-hover/img:scale-105" />
+                            <img
+                                src={product.image}
+                                alt={product.name}
+                                className="max-h-[450px] max-w-full object-contain drop-shadow-2xl transition-transform duration-700 group-hover/img:scale-105"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = '/images/book-placeholder.png';
+                                }}
+                            />
                         ) : (
                             <div className="text-slate-300">No Image Available</div>
                         )}
